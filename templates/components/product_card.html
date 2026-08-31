@@ -6,6 +6,7 @@
         {% else %}
             <span>{{ product.name|slice:":1" }}</span>
         {% endif %}
+        <button class="favorite-button" type="button" aria-label="Favoritar {{ product.name }}">♡</button>
     </div>
     <div class="product-body">
         <h2>{{ product.name }}</h2>
@@ -18,14 +19,14 @@
                 <strong>R$ {{ product.current_price }}</strong>
             </div>
             {% if product.kind == 'custom' %}
-                <a class="small-button" href="{% url 'menu:custom_burger' %}">Montar</a>
+                <a class="small-button icon-button" href="{% url 'menu:custom_burger' %}" aria-label="Montar {{ product.name }}">+</a>
             {% elif product.kind == 'combo' or product.kind == 'promotion' %}
                 <form method="post" action="{{ product.get_absolute_url }}">
                     {% csrf_token %}
-                    <button class="small-button" type="submit">Adicionar</button>
+                    <button class="small-button icon-button" type="submit" aria-label="Adicionar {{ product.name }}">+</button>
                 </form>
             {% else %}
-                <a class="small-button" href="{{ product.get_absolute_url }}">Escolher</a>
+                <a class="small-button icon-button" href="{{ product.get_absolute_url }}" aria-label="Escolher {{ product.name }}">+</a>
             {% endif %}
         </div>
     </div>

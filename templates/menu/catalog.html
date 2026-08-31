@@ -20,6 +20,10 @@
 <nav class="category-tabs" aria-label="Categorias">
     {% for category in categories %}
         <a class="{% if selected_category.slug == category.slug %}active{% endif %}" href="?categoria={{ category.slug }}">
+            {% if category.slug == 'combos' %}<span>▣</span>{% endif %}
+            {% if category.slug == 'promocoes' %}<span>◇</span>{% endif %}
+            {% if category.slug == 'lanches' %}<span>▤</span>{% endif %}
+            {% if category.slug == 'personalizar' %}<span>＋</span>{% endif %}
             {{ category.name }}
         </a>
     {% empty %}
