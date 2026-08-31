@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Cardapio - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="menu-head">
+    <div>
+        <p class="eyebrow">
+            {% if request.session.order_type == 'eat_in' %}
+                Mesa {{ request.session.table_number }}
+            {% else %}
+                Pedido para viagem
+            {% endif %}
+        </p>
+        <h1>Cardapio</h1>
+    </div>
+    <a class="ghost-button" href="{% url 'core:start' %}">Trocar</a>
+</section>
+
+<nav class="category-tabs" aria-label="Categorias">
+    {% for category in categories %}
+        <a class="{% if selected_category.slug == category.slug %}active{% endif %}" href="?categoria={{ category.slug }}">
+            {{ category.name }}
+        </a>
+    {% empty %}
+        <span>Nenhuma categoria cadastrada.</span>
+    {% endfor %}
+</nav>
+
+<section class="product-list">
+    {% for product in products %}
+        {% include 'components/product_card.html' %}
+    {% empty %}
+        <div class="empty-state">
+            <h2>Nao ha produtos disponiveis nessa categoria.</h2>
+            <p>Cadastre itens pelo Django Admin ou rode os dados de demonstracao.</p>
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}

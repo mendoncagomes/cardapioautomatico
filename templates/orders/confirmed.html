@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Pedido confirmado - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="success-screen">
+    <p class="success-mark">OK</p>
+    <h1>Pedido realizado!</h1>
+    <p>Pedido #{{ order.id }}</p>
+    {% if order.table_number %}<p>Mesa {{ order.table_number }}</p>{% endif %}
+    <p>Seu pedido foi enviado para preparo.</p>
+    <a class="primary-button" href="{% url 'core:start' %}">Novo pedido</a>
+</section>
+{% endblock %}

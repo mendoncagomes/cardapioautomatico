@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Carrinho - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="cart-page">
+    <a class="back-link" href="{% url 'menu:catalog' %}">Continuar comprando</a>
+    <h1>Seu pedido</h1>
+
+    {% if items %}
+        <div class="cart-list">
+            {% for item in items %}
+                <article class="cart-item">
+                    <div class="cart-thumb">
+                        {% if item.image %}
+                            <img src="{% static item.image %}" alt="{{ item.name }}">
+                        {% else %}
+                            {{ item.name|slice:":1" }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h2>{{ item.name }}</h2>
+                        {% for option in item.options %}
+                            <p>{{ option.name }} - R$ {{ option.price }}</p>
+                        {% endfor %}
+                        <strong>R$ {{ item.subtotal }}</strong>
+                    </div>
+                    <form class="quantity-form" method="post" action="{% url 'cart:update' item.index %}">
+                        {% csrf_token %}
+                        <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}">-</button>
+                        <span>{{ item.quantity }}</span>
+                        <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}">+</button>
+                    </form>
+                    <form method="post" action="{% url 'cart:remove' item.index %}">
+                        {% csrf_token %}
+                        <button class="text-button" type="submit">Remover</button>
+                    </form>
+                </article>
+            {% endfor %}
+        </div>
+        <div class="total-box">
+            <span>Total</span>
+            <strong>R$ {{ total }}</strong>
+        </div>
+        <a class="primary-button" href="{% url 'orders:checkout' %}">Finalizar pedido</a>
+    {% else %}
+        <div class="empty-state">
+            <h2>Nenhum item no seu pedido ainda.</h2>
+            <p>Escolha um combo ou monte seu lanche para continuar.</p>
+            <a class="primary-button" href="{% url 'menu:catalog' %}">Ver cardapio</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

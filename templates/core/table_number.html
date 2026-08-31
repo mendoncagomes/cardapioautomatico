@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Mesa - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="narrow-flow">
+    <a class="back-link" href="{% url 'core:start' %}">Voltar</a>
+    <h1>Qual o numero da sua mesa?</h1>
+    <form class="form-stack" method="post">
+        {% csrf_token %}
+        <label for="table_number">Numero da mesa</label>
+        <input id="table_number" name="table_number" type="number" min="1" inputmode="numeric" required autofocus>
+        <button class="primary-button" type="submit">Continuar</button>
+    </form>
+</section>
+{% endblock %}

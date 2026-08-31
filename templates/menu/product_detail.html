@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <a class="back-link" href="{% url 'menu:catalog' %}">Voltar ao cardapio</a>
+    <div class="detail-image">
+        {% if product.image %}
+            <img src="{% static product.image %}" alt="{{ product.name }}">
+        {% else %}
+            <span>{{ product.name|slice:":1" }}</span>
+        {% endif %}
+    </div>
+    <h1>{{ product.name }}</h1>
+    <p>{{ product.description }}</p>
+    {% if product.ingredients %}<p class="ingredients">{{ product.ingredients }}</p>{% endif %}
+    <strong class="detail-price">R$ {{ product.current_price }}</strong>
+
+    <form class="form-stack" method="post">
+        {% csrf_token %}
+        {% if product.kind == 'burger' %}
+            <div class="step">1 Lanche</div>
+            <div class="step">2 Bebida</div>
+            <fieldset>
+                <legend>Deseja adicionar uma bebida?</legend>
+                <label class="option-row"><input type="radio" name="drink" value="" checked> Sem bebida <span>R$ 0,00</span></label>
+                {% for option in drinks %}
+                    <label class="option-row"><input type="radio" name="drink" value="{{ option.id }}"> {{ option.name }} <span>R$ {{ option.price }}</span></label>
+                {% endfor %}
+            </fieldset>
+
+            <div class="step">3 Acompanhamento</div>
+            <fieldset>
+                <legend>Deseja adicionar um acompanhamento?</legend>
+                <label class="option-row"><input type="radio" name="side" value="" checked> Sem acompanhamento <span>R$ 0,00</span></label>
+                {% for option in sides %}
+                    <label class="option-row"><input type="radio" name="side" value="{{ option.id }}"> {{ option.name }} <span>R$ {{ option.price }}</span></label>
+                {% endfor %}
+            </fieldset>
+            <button class="primary-button" type="submit">Adicionar ao carrinho</button>
+        {% else %}
+            <button class="primary-button" type="submit">Adicionar ao pedido</button>
+        {% endif %}
+    </form>
+</section>
+{% endblock %}

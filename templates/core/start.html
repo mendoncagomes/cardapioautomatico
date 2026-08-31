@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Comecar pedido - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="start-screen">
+    <div>
+        <p class="eyebrow">Autoatendimento</p>
+        <h1>Como deseja receber seu pedido?</h1>
+    </div>
+
+    <form class="choice-grid" method="post" action="{% url 'core:choose_order_type' %}">
+        {% csrf_token %}
+        <button class="choice-button" type="submit" name="order_type" value="eat_in">
+            <span class="choice-icon">IN</span>
+            <strong>Comer aqui</strong>
+            <small>Informe sua mesa e envie para preparo.</small>
+        </button>
+        <button class="choice-button" type="submit" name="order_type" value="takeaway">
+            <span class="choice-icon">GO</span>
+            <strong>Levar para viagem</strong>
+            <small>Monte o pedido e retire no balcao.</small>
+        </button>
+    </form>
+</section>
+{% endblock %}

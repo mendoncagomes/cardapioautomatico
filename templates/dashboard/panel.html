@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Painel - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="menu-head">
+    <div>
+        <p class="eyebrow">Cozinha e balcao</p>
+        <h1>Painel de pedidos</h1>
+    </div>
+    <a class="ghost-button" href="{% url 'menu:catalog' %}">Cardapio</a>
+</section>
+
+<section class="dashboard-grid">
+    {% for order in orders %}
+        <article class="order-card">
+            <div class="order-top">
+                <h2>Pedido #{{ order.id }}</h2>
+                <span>{{ order.get_status_display }}</span>
+            </div>
+            <p>{% if order.table_number %}Mesa {{ order.table_number }}{% else %}Para viagem{% endif %}</p>
+            {% for item in order.items.all %}
+                <p>{{ item.quantity }}x {{ item.product_name }}</p>
+            {% endfor %}
+            <strong>R$ {{ order.total }}</strong>
+            <form method="post" action="{% url 'dashboard:update_status' order.id %}">
+                {% csrf_token %}
+                <button class="primary-button" type="submit">
+                    {% if order.status == 'confirmed' %}Iniciar preparo{% elif order.status == 'preparing' %}Marcar como pronto{% elif order.status == 'ready' %}Finalizar{% else %}Atualizar{% endif %}
+                </button>
+            </form>
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h2>Nenhum pedido aberto.</h2>
+            <p>Pedidos confirmados aparecem aqui automaticamente.</p>
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}

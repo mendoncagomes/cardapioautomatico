@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Personalizar pedido - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <a class="back-link" href="{% url 'menu:catalog' %}">Voltar ao cardapio</a>
+    <h1>Monte seu hamburguer</h1>
+    <p>Escolha os itens e acompanhe o preco antes de adicionar ao pedido.</p>
+    <strong class="detail-price" data-base-price="{{ product.current_price }}">R$ <span id="custom-total">{{ product.current_price }}</span></strong>
+
+    <form class="form-stack js-custom-form" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Tipo de pao</legend>
+            {% for option in grouped_options.bread %}
+                <label class="option-row"><input type="radio" name="bread" value="{{ option.id }}" data-price="{{ option.price }}" {% if forloop.first %}checked{% endif %}> {{ option.name }} <span>R$ {{ option.price }}</span></label>
+            {% endfor %}
+        </fieldset>
+        <fieldset>
+            <legend>Quantidade de carne</legend>
+            {% for option in grouped_options.meat %}
+                <label class="option-row"><input type="radio" name="meat" value="{{ option.id }}" data-price="{{ option.price }}" {% if forloop.first %}checked{% endif %}> {{ option.name }} <span>R$ {{ option.price }}</span></label>
+            {% endfor %}
+        </fieldset>
+        <fieldset>
+            <legend>Queijo</legend>
+            {% for option in grouped_options.cheese %}
+                <label class="option-row"><input type="radio" name="cheese" value="{{ option.id }}" data-price="{{ option.price }}" {% if forloop.first %}checked{% endif %}> {{ option.name }} <span>R$ {{ option.price }}</span></label>
+            {% endfor %}
+        </fieldset>
+        <fieldset>
+            <legend>Adicionais</legend>
+            {% for option in grouped_options.extra %}
+                <label class="option-row"><input type="checkbox" name="extra" value="{{ option.id }}" data-price="{{ option.price }}"> {{ option.name }} <span>R$ {{ option.price }}</span></label>
+            {% endfor %}
+        </fieldset>
+        <button class="primary-button" type="submit">Adicionar ao carrinho</button>
+    </form>
+</section>
+{% endblock %}

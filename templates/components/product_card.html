@@ -1,0 +1,32 @@
+{% load static %}
+<article class="product-card">
+    <div class="product-image">
+        {% if product.image %}
+            <img src="{% static product.image %}" alt="{{ product.name }}">
+        {% else %}
+            <span>{{ product.name|slice:":1" }}</span>
+        {% endif %}
+    </div>
+    <div class="product-body">
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <div class="product-footer">
+            <div>
+                {% if product.promotional_price %}
+                    <small class="old-price">R$ {{ product.price }}</small>
+                {% endif %}
+                <strong>R$ {{ product.current_price }}</strong>
+            </div>
+            {% if product.kind == 'custom' %}
+                <a class="small-button" href="{% url 'menu:custom_burger' %}">Montar</a>
+            {% elif product.kind == 'combo' or product.kind == 'promotion' %}
+                <form method="post" action="{{ product.get_absolute_url }}">
+                    {% csrf_token %}
+                    <button class="small-button" type="submit">Adicionar</button>
+                </form>
+            {% else %}
+                <a class="small-button" href="{{ product.get_absolute_url }}">Escolher</a>
+            {% endif %}
+        </div>
+    </div>
+</article>

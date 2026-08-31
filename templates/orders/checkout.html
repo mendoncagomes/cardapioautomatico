@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Finalizar pedido - QuickMenu{% endblock %}
+
+{% block content %}
+<section class="cart-page">
+    <a class="back-link" href="{% url 'cart:detail' %}">Voltar ao carrinho</a>
+    <h1>Finalizar pedido</h1>
+    <div class="summary-box">
+        <p><strong>Tipo:</strong> {% if request.session.order_type == 'eat_in' %}Comer aqui{% else %}Levar para viagem{% endif %}</p>
+        {% if request.session.table_number %}<p><strong>Mesa:</strong> {{ request.session.table_number }}</p>{% endif %}
+    </div>
+
+    <div class="cart-list compact">
+        {% for item in items %}
+            <article class="cart-item">
+                <div>
+                    <h2>{{ item.quantity }}x {{ item.name }}</h2>
+                    {% for option in item.options %}<p>{{ option.name }}</p>{% endfor %}
+                </div>
+                <strong>R$ {{ item.subtotal }}</strong>
+            </article>
+        {% endfor %}
+    </div>
+
+    <div class="total-box">
+        <span>Total</span>
+        <strong>R$ {{ total }}</strong>
+    </div>
+    <form method="post" action="{% url 'orders:confirm' %}">
+        {% csrf_token %}
+        <button class="primary-button" type="submit">Confirmar pedido</button>
+    </form>
+</section>
+{% endblock %}
