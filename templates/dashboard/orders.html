@@ -1,0 +1,33 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Pedidos - QuickMenu{% endblock %}
+{% block eyebrow %}Fila de atendimento{% endblock %}
+{% block heading %}Pedidos{% endblock %}
+{% block actions %}
+<div class="filter-actions">
+    <a href="{% url 'dashboard:orders' %}?filter=open">Abertos</a>
+    <a href="{% url 'dashboard:orders' %}?filter=local">Mesas</a>
+    <a href="{% url 'dashboard:orders' %}?filter=takeaway">Viagem</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="kanban" data-orders-board data-orders-endpoint="{% url 'dashboard:orders_json' %}?filter={{ active_filter }}">
+    <div class="kanban-column">
+        <h2>Novos</h2>
+        {% for order in grouped_orders.pending %}{% include 'dashboard/partials/order_card.html' with order=order %}{% empty %}<p class="muted">Sem pedidos novos.</p>{% endfor %}
+    </div>
+    <div class="kanban-column">
+        <h2>Confirmados</h2>
+        {% for order in grouped_orders.confirmed %}{% include 'dashboard/partials/order_card.html' with order=order %}{% empty %}<p class="muted">Nada confirmado.</p>{% endfor %}
+    </div>
+    <div class="kanban-column">
+        <h2>Em preparo</h2>
+        {% for order in grouped_orders.preparing %}{% include 'dashboard/partials/order_card.html' with order=order %}{% empty %}<p class="muted">Cozinha livre.</p>{% endfor %}
+    </div>
+    <div class="kanban-column">
+        <h2>Prontos</h2>
+        {% for order in grouped_orders.ready %}{% include 'dashboard/partials/order_card.html' with order=order %}{% empty %}<p class="muted">Nenhum pedido pronto.</p>{% endfor %}
+    </div>
+</section>
+<div class="order-toast" data-order-toast hidden>Novo pedido recebido</div>
+{% endblock %}

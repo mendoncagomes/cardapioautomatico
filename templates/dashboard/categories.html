@@ -1,0 +1,28 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Categorias - QuickMenu{% endblock %}
+{% block eyebrow %}Organizacao{% endblock %}
+{% block heading %}Categorias{% endblock %}
+{% block actions %}{% if is_manager %}<a class="primary-panel-button" href="{% url 'dashboard:category_create' %}">Nova categoria</a>{% endif %}{% endblock %}
+
+{% block content %}
+<section class="panel-card table-card">
+    <div class="responsive-table">
+        <table>
+            <thead><tr><th>Nome</th><th>Slug</th><th>Produtos</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td><strong>{{ category.name }}</strong></td>
+                        <td>{{ category.slug }}</td>
+                        <td>{{ category.product_count }}</td>
+                        <td>{% if category.active %}<span class="status-pill status-ready">Ativa</span>{% else %}<span class="status-pill muted-pill">Inativa</span>{% endif %}</td>
+                        <td>{% if is_manager %}<a class="small-link" href="{% url 'dashboard:category_edit' category.id %}">Editar</a>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">Nenhuma categoria cadastrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

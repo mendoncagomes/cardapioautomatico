@@ -1,0 +1,42 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Pedido #{{ order.id }} - QuickMenu{% endblock %}
+{% block eyebrow %}{{ order_badge }}{% endblock %}
+{% block heading %}Pedido #{{ order.id }}{% endblock %}
+{% block actions %}<a class="secondary-panel-button" href="{% url 'dashboard:orders' %}">Voltar</a>{% endblock %}
+
+{% block content %}
+<section class="panel-grid two-columns">
+    <article class="panel-card">
+        <h2>Itens</h2>
+        <div class="compact-list">
+            {% for item in order.items.all %}
+                <div class="compact-row align-start">
+                    <span>
+                        <strong>{{ item.quantity }}x {{ item.product_name }}</strong>
+                        {% for option in item.options.all %}<small>{{ option.name }} - R$ {{ option.price }}</small>{% endfor %}
+                    </span>
+                    <strong>R$ {{ item.total }}</strong>
+                </div>
+            {% endfor %}
+        </div>
+    </article>
+    <article class="panel-card">
+        <h2>Status</h2>
+        <p class="status-pill status-{{ order.status }}">{{ status_label }}</p>
+        <p class="muted">Criado em {{ order.created_at|date:"d/m/Y H:i" }}</p>
+        <p class="total-line"><span>Total</span><strong>R$ {{ order.total }}</strong></p>
+        {% if status_action %}
+            <form method="post" action="{% url 'dashboard:update_status' order.id %}">
+                {% csrf_token %}
+                <button class="primary-panel-button" type="submit">{{ status_action }}</button>
+            </form>
+        {% endif %}
+        {% if order.status != 'cancelled' and order.status != 'completed' %}
+            <form method="post" action="{% url 'dashboard:cancel_order' order.id %}" onsubmit="return confirm('Cancelar este pedido?')">
+                {% csrf_token %}
+                <button class="danger-button" type="submit">Cancelar pedido</button>
+            </form>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

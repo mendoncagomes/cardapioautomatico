@@ -7,8 +7,8 @@
 <section class="product-detail">
     <a class="back-link" href="{% url 'menu:catalog' %}">Voltar ao cardapio</a>
     <div class="detail-image">
-        {% if product.image %}
-            <img src="{% static product.image %}" alt="{{ product.name }}">
+        {% if product.image_url %}
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
         {% else %}
             <span>{{ product.name|slice:":1" }}</span>
         {% endif %}

@@ -1,0 +1,17 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}{{ title }} - QuickMenu{% endblock %}
+{% block eyebrow %}Opcao{% endblock %}
+{% block heading %}{{ title }}{% endblock %}
+{% block actions %}<a class="secondary-panel-button" href="{% url 'dashboard:options' %}">Voltar</a>{% endblock %}
+
+{% block content %}
+<section class="panel-card form-card">
+    <form class="panel-form grid-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <label>{{ field.label }} {{ field }}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</label>
+        {% endfor %}
+        <div class="form-actions span-2"><button class="primary-panel-button" type="submit">Salvar</button></div>
+    </form>
+</section>
+{% endblock %}

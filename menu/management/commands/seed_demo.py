@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import Group, User
 
 from menu.models import Category, Product, ProductOption
 
@@ -9,6 +10,12 @@ class Command(BaseCommand):
     help = 'Create demo data for the QuickMenu MVP.'
 
     def handle(self, *args, **options):
+        admin_group, _ = Group.objects.get_or_create(name='Administradores')
+        Group.objects.get_or_create(name='Funcionarios')
+        if not User.objects.filter(username='admin').exists():
+            user = User.objects.create_superuser('admin', password='admin12345')
+            user.groups.add(admin_group)
+
         categories = [
             ('combos', 'Combos', 1),
             ('promocoes', 'Promocoes', 2),
@@ -496,7 +503,7 @@ class Command(BaseCommand):
             data['image'] = product_images.get(data['slug'], data.get('image', ''))
             Product.objects.update_or_create(
                 slug=data['slug'],
-                defaults={**data, 'active': True},
+                defaults={**data, 'active': True, 'available': True},
             )
 
         options = [
@@ -529,7 +536,7 @@ class Command(BaseCommand):
                 name=name,
                 option_type=option_type,
                 product=None,
-                defaults={'price': price, 'active': True, 'order': order},
+                defaults={'price': price, 'active': True, 'available': True, 'order': order},
             )
 
         self.stdout.write(self.style.SUCCESS('Demo data ready.'))

@@ -123,6 +123,13 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+LOGIN_URL = 'dashboard:login'
+LOGIN_REDIRECT_URL = 'dashboard:panel'
+LOGOUT_REDIRECT_URL = 'dashboard:login'
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",

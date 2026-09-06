@@ -1,8 +1,8 @@
 {% load static %}
 <article class="product-card">
     <div class="product-image">
-        {% if product.image %}
-            <img src="{% static product.image %}" alt="{{ product.name }}">
+        {% if product.image_url %}
+            <img class="product-photo-fit" src="{{ product.image_url }}" alt="{{ product.name }}" style="object-fit: contain; object-position: center center;">
         {% else %}
             <span>{{ product.name|slice:":1" }}</span>
         {% endif %}

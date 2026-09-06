@@ -1,0 +1,40 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Opcoes - QuickMenu{% endblock %}
+{% block eyebrow %}Complementos{% endblock %}
+{% block heading %}Opcoes e adicionais{% endblock %}
+{% block actions %}{% if is_manager %}<a class="primary-panel-button" href="{% url 'dashboard:option_create' %}">Nova opcao</a>{% endif %}{% endblock %}
+
+{% block content %}
+<div class="filter-actions section-tabs">
+    <a href="{% url 'dashboard:options' %}">Todas</a>
+    {% for value,label in option_types %}
+        <a href="{% url 'dashboard:options' %}?type={{ value }}">{{ label }}</a>
+    {% endfor %}
+</div>
+<section class="panel-card table-card">
+    <div class="responsive-table">
+        <table>
+            <thead><tr><th>Opcao</th><th>Tipo</th><th>Produto</th><th>Preco</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                {% for option in options %}
+                    <tr>
+                        <td><strong>{{ option.name }}</strong></td>
+                        <td>{{ option.get_option_type_display }}</td>
+                        <td>{% firstof option.product.name 'Global' %}</td>
+                        <td>R$ {{ option.price }}</td>
+                        <td>{% if option.available and option.active %}<span class="status-pill status-ready">Disponivel</span>{% else %}<span class="status-pill status-cancelled">Pausada</span>{% endif %}</td>
+                        <td class="table-actions">
+                            <form method="post" action="{% url 'dashboard:option_toggle_available' option.id %}">
+                                {% csrf_token %}<button class="small-action" type="submit">{% if option.available %}Pausar{% else %}Ativar{% endif %}</button>
+                            </form>
+                            {% if is_manager %}<a class="small-link" href="{% url 'dashboard:option_edit' option.id %}">Editar</a>{% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">Nenhuma opcao cadastrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

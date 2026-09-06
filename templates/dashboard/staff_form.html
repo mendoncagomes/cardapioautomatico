@@ -1,0 +1,17 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Novo funcionario - QuickMenu{% endblock %}
+{% block eyebrow %}Equipe{% endblock %}
+{% block heading %}Novo funcionario{% endblock %}
+{% block actions %}<a class="secondary-panel-button" href="{% url 'dashboard:staff_users' %}">Voltar</a>{% endblock %}
+
+{% block content %}
+<section class="panel-card form-card">
+    <form class="panel-form grid-form" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <label>{{ field.label }} {{ field }}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</label>
+        {% endfor %}
+        <div class="form-actions span-2"><button class="primary-panel-button" type="submit">Cadastrar</button></div>
+    </form>
+</section>
+{% endblock %}

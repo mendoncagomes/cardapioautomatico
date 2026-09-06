@@ -1,0 +1,54 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Painel - QuickMenu{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/panel.css' %}">
+</head>
+<body class="panel-shell">
+    <aside class="panel-sidebar">
+        <a class="panel-brand" href="{% url 'dashboard:panel' %}"><span>Quick</span>Menu</a>
+        <nav class="panel-nav">
+            <a href="{% url 'dashboard:panel' %}">Resumo</a>
+            <a href="{% url 'dashboard:orders' %}">Pedidos</a>
+            <a href="{% url 'dashboard:products' %}">Produtos</a>
+            <a href="{% url 'dashboard:categories' %}">Categorias</a>
+            <a href="{% url 'dashboard:options' %}">Opcoes</a>
+            <a href="{% url 'dashboard:reports' %}">Relatorios</a>
+            {% if is_manager %}
+                <a href="{% url 'dashboard:staff_users' %}">Funcionarios</a>
+            {% endif %}
+        </nav>
+        <div class="panel-sidebar-footer">
+            <a class="panel-link" href="{% url 'menu:catalog' %}">Ver cardapio</a>
+            <form method="post" action="{% url 'dashboard:logout' %}">
+                {% csrf_token %}
+                <button class="panel-link panel-link-danger" type="submit">Sair</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="panel-main">
+        <header class="panel-topbar">
+            <div>
+                <p class="panel-eyebrow">{% block eyebrow %}Painel interno{% endblock %}</p>
+                <h1>{% block heading %}QuickMenu{% endblock %}</h1>
+            </div>
+            {% block actions %}{% endblock %}
+        </header>
+
+        {% if messages %}
+            <div class="panel-messages">
+                {% for message in messages %}
+                    <p class="message message-{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{% static 'js/panel.js' %}"></script>
+</body>
+</html>

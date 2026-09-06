@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar - QuickMenu</title>
+    <link rel="stylesheet" href="{% static 'css/panel.css' %}">
+</head>
+<body class="login-page">
+    <section class="login-card">
+        <a class="panel-brand" href="{% url 'menu:catalog' %}"><span>Quick</span>Menu</a>
+        <p class="panel-eyebrow">Painel interno</p>
+        <h1>Entrar</h1>
+        {% if form.errors %}
+            <p class="message message-error">Usuario ou senha invalidos.</p>
+        {% endif %}
+        <form class="panel-form" method="post">
+            {% csrf_token %}
+            <label>Usuario {{ form.username }}</label>
+            <label>Senha {{ form.password }}</label>
+            <button class="primary-panel-button" type="submit">Acessar painel</button>
+        </form>
+    </section>
+</body>
+</html>

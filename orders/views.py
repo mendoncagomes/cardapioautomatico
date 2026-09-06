@@ -22,7 +22,11 @@ def confirm(request):
     if 'order_type' not in request.session:
         return redirect('core:start')
 
-    validated_items, total = validate_cart_from_database(request.session)
+    try:
+        validated_items, total = validate_cart_from_database(request.session)
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return redirect('cart:detail')
     if not validated_items:
         messages.info(request, 'Seu carrinho esta vazio.')
         return redirect('menu:catalog')
@@ -36,6 +40,7 @@ def confirm(request):
     for item in validated_items:
         order_item = OrderItem.objects.create(
             order=order,
+            product=item['product'],
             product_name=item['product'].name,
             product_snapshot={
                 'id': item['product'].id,

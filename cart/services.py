@@ -38,7 +38,7 @@ def build_item(product, quantity=1, options=None):
     return {
         'product_id': product.id,
         'name': product.name,
-        'image': product.image,
+        'image': product.image_url,
         'quantity': max(int(quantity), 1),
         'unit_price': str(unit_price),
         'options': [serialize_option(option) for option in options],
@@ -101,9 +101,14 @@ def validate_cart_from_database(session):
     total = Decimal('0.00')
 
     for item in get_cart(session):
-        product = Product.objects.get(pk=item['product_id'], active=True)
+        try:
+            product = Product.objects.get(pk=item['product_id'], active=True, available=True)
+        except Product.DoesNotExist as exc:
+            raise ValueError('Um dos itens do carrinho nao esta mais disponivel.') from exc
         option_ids = [option['id'] for option in item.get('options', [])]
-        options = list(ProductOption.objects.filter(pk__in=option_ids, active=True))
+        options = list(ProductOption.objects.filter(pk__in=option_ids, active=True, available=True))
+        if len(options) != len(option_ids):
+            raise ValueError('Uma das opcoes do carrinho nao esta mais disponivel.')
         unit_price = money(product.current_price + sum(option.price for option in options))
         quantity = max(int(item['quantity']), 1)
         subtotal = money(unit_price * quantity)

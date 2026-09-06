@@ -1,0 +1,28 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Funcionarios - QuickMenu{% endblock %}
+{% block eyebrow %}Equipe{% endblock %}
+{% block heading %}Funcionarios{% endblock %}
+{% block actions %}<a class="primary-panel-button" href="{% url 'dashboard:staff_create' %}">Novo funcionario</a>{% endblock %}
+
+{% block content %}
+<section class="panel-card table-card">
+    <div class="responsive-table">
+        <table>
+            <thead><tr><th>Nome</th><th>Usuario</th><th>Email</th><th>Perfil</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td><strong>{% firstof user.first_name user.username %}</strong></td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{% for group in user.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% empty %}Administrador{% endfor %}</td>
+                        <td>{% if user.is_active %}<span class="status-pill status-ready">Ativo</span>{% else %}<span class="status-pill muted-pill">Bloqueado</span>{% endif %}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">Nenhum funcionario cadastrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+<article class="order-ticket status-{{ order.status }}">
+    <a class="order-ticket-main" href="{% url 'dashboard:order_detail' order.id %}">
+        <span class="ticket-number">#{{ order.id }}</span>
+        <strong>{% if order.order_type == 'eat_in' %}MESA {{ order.table_number }}{% else %}PARA VIAGEM{% endif %}</strong>
+        <small>{{ order.created_at|time:"H:i" }} - R$ {{ order.total }}</small>
+    </a>
+    <div class="ticket-items">
+        {% for item in order.items.all %}
+            <p>{{ item.quantity }}x {{ item.product_name }}</p>
+        {% endfor %}
+    </div>
+    {% if order.status != 'completed' and order.status != 'cancelled' %}
+        <form method="post" action="{% url 'dashboard:update_status' order.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button class="small-action" type="submit">
+                {% if order.status == 'pending' %}Aceitar{% elif order.status == 'confirmed' %}Preparar{% elif order.status == 'preparing' %}Pronto{% elif order.status == 'ready' %}Finalizar{% else %}Atualizar{% endif %}
+            </button>
+        </form>
+    {% endif %}
+</article>

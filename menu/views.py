@@ -25,7 +25,7 @@ def catalog(request):
 
     if selected_slug:
         selected_category = get_object_or_404(Category, slug=selected_slug, active=True)
-        products = selected_category.products.filter(active=True)
+        products = selected_category.products.filter(active=True, available=True)
 
     return render(request, 'menu/catalog.html', {
         'categories': categories,
@@ -39,7 +39,7 @@ def product_detail(request, slug):
     if not ensure_order_started(request):
         return redirect('core:start')
 
-    product = get_object_or_404(Product, slug=slug, active=True)
+    product = get_object_or_404(Product, slug=slug, active=True, available=True)
     if product.kind in {'combo', 'promotion'}:
         if request.method == 'POST':
             add_item(request.session, build_item(product))
@@ -47,12 +47,12 @@ def product_detail(request, slug):
             return redirect('menu:catalog')
         return render(request, 'menu/product_detail.html', {'product': product})
 
-    drinks = ProductOption.objects.filter(option_type='drink', active=True)
-    sides = ProductOption.objects.filter(option_type='side', active=True)
+    drinks = ProductOption.objects.filter(option_type='drink', active=True, available=True)
+    sides = ProductOption.objects.filter(option_type='side', active=True, available=True)
 
     if request.method == 'POST':
         option_ids = [request.POST.get('drink'), request.POST.get('side')]
-        options = ProductOption.objects.filter(pk__in=[oid for oid in option_ids if oid], active=True)
+        options = ProductOption.objects.filter(pk__in=[oid for oid in option_ids if oid], active=True, available=True)
         add_item(request.session, build_item(product, options=list(options)))
         messages.success(request, 'Lanche adicionado ao pedido.')
         return redirect('cart:detail')
@@ -69,12 +69,12 @@ def custom_burger(request):
     if not ensure_order_started(request):
         return redirect('core:start')
 
-    base = get_object_or_404(Product, slug='monte-seu-hamburguer', active=True)
+    base = get_object_or_404(Product, slug='monte-seu-hamburguer', active=True, available=True)
     grouped_options = {
-        'bread': ProductOption.objects.filter(option_type='bread', active=True),
-        'meat': ProductOption.objects.filter(option_type='meat', active=True),
-        'cheese': ProductOption.objects.filter(option_type='cheese', active=True),
-        'extra': ProductOption.objects.filter(option_type='extra', active=True),
+        'bread': ProductOption.objects.filter(option_type='bread', active=True, available=True),
+        'meat': ProductOption.objects.filter(option_type='meat', active=True, available=True),
+        'cheese': ProductOption.objects.filter(option_type='cheese', active=True, available=True),
+        'extra': ProductOption.objects.filter(option_type='extra', active=True, available=True),
     }
 
     if request.method == 'POST':
@@ -84,7 +84,7 @@ def custom_burger(request):
             if value:
                 selected_ids.append(value)
         selected_ids.extend(request.POST.getlist('extra'))
-        options = ProductOption.objects.filter(pk__in=selected_ids, active=True)
+        options = ProductOption.objects.filter(pk__in=selected_ids, active=True, available=True)
         add_item(request.session, build_item(base, options=list(options)))
         messages.success(request, 'Hamburguer personalizado adicionado.')
         return redirect('cart:detail')

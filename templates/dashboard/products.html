@@ -1,0 +1,65 @@
+{% extends 'dashboard/base_panel.html' %}
+{% block title %}Produtos - QuickMenu{% endblock %}
+{% block eyebrow %}Cardapio{% endblock %}
+{% block heading %}Produtos{% endblock %}
+{% block actions %}{% if is_manager %}<a class="primary-panel-button" href="{% url 'dashboard:product_create' %}">Novo produto</a>{% endif %}{% endblock %}
+
+{% block content %}
+<form class="filter-bar" method="get">
+    <input type="search" name="q" value="{{ query }}" placeholder="Buscar produto">
+    <select name="category">
+        <option value="">Todas categorias</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="availability">
+        <option value="">Todos</option>
+        <option value="available" {% if availability == 'available' %}selected{% endif %}>Disponiveis</option>
+        <option value="unavailable" {% if availability == 'unavailable' %}selected{% endif %}>Indisponiveis</option>
+        <option value="inactive" {% if availability == 'inactive' %}selected{% endif %}>Inativos</option>
+        <option value="promotion" {% if availability == 'promotion' %}selected{% endif %}>Promocoes</option>
+    </select>
+    <button class="secondary-panel-button" type="submit">Filtrar</button>
+</form>
+
+<section class="panel-card table-card">
+    <div class="responsive-table">
+        <table>
+            <thead><tr><th>Produto</th><th>Categoria</th><th>Preco</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="table-product">
+                                {% if product.image_url %}<img src="{{ product.image_url }}" alt="{{ product.name }}">{% endif %}
+                                <div><strong>{{ product.name }}</strong><small>{{ product.get_kind_display }}</small></div>
+                            </div>
+                        </td>
+                        <td>{{ product.category.name }}</td>
+                        <td>R$ {{ product.current_price }}</td>
+                        <td>
+                            {% if not product.active %}<span class="status-pill muted-pill">Inativo</span>
+                            {% elif product.available %}<span class="status-pill status-ready">Disponivel</span>
+                            {% else %}<span class="status-pill status-cancelled">Indisponivel</span>{% endif %}
+                        </td>
+                        <td class="table-actions">
+                            <form method="post" action="{% url 'dashboard:product_toggle_available' product.id %}">
+                                {% csrf_token %}<button class="small-action" type="submit">{% if product.available %}Pausar{% else %}Ativar{% endif %}</button>
+                            </form>
+                            {% if is_manager %}
+                                <a class="small-link" href="{% url 'dashboard:product_edit' product.id %}">Editar</a>
+                                <form method="post" action="{% url 'dashboard:product_deactivate' product.id %}" onsubmit="return confirm('Desativar este produto?')">
+                                    {% csrf_token %}<button class="text-danger" type="submit">Desativar</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">Nenhum produto encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

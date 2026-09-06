@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+from django.templatetags.static import static
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -7,6 +9,8 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
     active = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['order', 'name']
@@ -33,9 +37,14 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     promotional_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     image = models.CharField(max_length=255, blank=True)
+    uploaded_image = models.ImageField(upload_to='products/', blank=True, null=True)
     kind = models.CharField(max_length=20, choices=KIND_CHOICES, default='burger')
     active = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['category__order', 'order', 'name']
@@ -48,6 +57,18 @@ class Product(models.Model):
     @property
     def current_price(self):
         return self.promotional_price if self.promotional_price is not None else self.price
+
+    @property
+    def is_promotional(self):
+        return self.promotional_price is not None
+
+    @property
+    def image_url(self):
+        if self.uploaded_image:
+            return self.uploaded_image.url
+        if self.image:
+            return static(self.image)
+        return ''
 
     def get_absolute_url(self):
         return reverse('menu:product_detail', kwargs={'slug': self.slug})
@@ -68,7 +89,11 @@ class ProductOption(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     option_type = models.CharField(max_length=20, choices=OPTION_TYPES)
     active = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
+    image = models.ImageField(upload_to='options/', blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['option_type', 'order', 'name']
