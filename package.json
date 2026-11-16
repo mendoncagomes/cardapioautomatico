@@ -1,0 +1,12 @@
+{
+  "name": "quickmenu-react-monorepo",
+  "private": true,
+  "version": "2.0.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "web": "npm run dev --workspace @quickmenu/web",
+    "web:build": "npm run build --workspace @quickmenu/web",
+    "mobile": "npm run start --workspace @quickmenu/mobile",
+    "check": "npm run check --workspace @quickmenu/shared && npm run build --workspace @quickmenu/web"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "QuickMenu",
+    "slug": "quickmenu",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#f7f7f9" },
+    "android": { "package": "com.quickmenu.app", "adaptiveIcon": { "backgroundColor": "#e4211d" } },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.quickmenu.app" }
+  }
+}
